@@ -1,14 +1,3 @@
-Popular / About Sundar’s Block be2abfb3155a38be4de4
-Updated April 27, 2017
-d3 | Force layout with images
-
-Open
-Force layout test/experiment with images
-
-Sources: - Force Layout - Force-based label placement - Collapsible force layout with directed paths and images/text in the nodes. - Labeled Force Layout
-
-index.html#
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,6 +22,29 @@ index.html#
       a:visited { color: #EE3124; }
       a:hover { color: #A4CD39; text-decoration: underline;}
       a:active { color: #EE3124; }
+
+#modal {
+    position:fixed;
+    left:150px;
+    top:20px;
+    z-index:1;
+    background: white;
+    border: 1px black solid;
+    box-shadow: 10px 10px 5px #888888;
+    display: none;
+}
+
+#content {
+    max-height: 400px;
+    overflow: auto;
+}
+
+#modalClose {
+    position: absolute;
+    top: -0px;
+    right: -0px;
+    z-index: 1;
+}
     </style>
 </head>
 
@@ -45,6 +57,7 @@ index.html#
     </header>
     <!-- container for force layout visualisation  -->
     <section id="vis"></section>
+    <div id="modal"><div id="content"></div><button id="modalClose" onclick="nodeFocus=false;nodeOut();d3.select('#modal').style('display','none');">X</button></div>
 <script>
 
 // some colour variables
@@ -146,11 +159,15 @@ function update() {
   // make the image grow a little on mouse over and add the text details on click
   var setEvents = images
           // Append hero text
-          .on( 'click', function (d) {
-              d3.select("h1").html(d.hero);
-              d3.select("h2").html(d.name);
-              d3.select("h3").html ("Take me to " + "<a href='" + d.link + "' >"  + d.hero + " web page ⇢"+ "</a>" );
-           })
+          .on( 'click', function imgClick(d) {
+              var newContent = "<img src=" + d.img + ">";
+              newContent += "<p>" + "Hero: " + d.hero + "</p>";
+              newContent += "<p>" + "Name: " + d.name + "</p>";
+              newContent += "<p>" + "Link: " + d.link + "</p>";
+
+              d3.select("#modal").style("display", "block").select("#content").html(newContent);
+            })
+
 
           .on( 'mouseenter', function() {
             // select element in current context
@@ -208,6 +225,8 @@ function tick() {
 }
 
 
+
+
 /**
  * Gives the coordinates of the border for keeping the nodes inside a frame
  * http://bl.ocks.org/mbostock/1129492
@@ -253,6 +272,14 @@ function flatten(root) {
   return nodes;
 }
 
+//modal
+
+
+function nodeOut() {
+      d3.selectAll(".hoverLabel").remove();
+      d3.selectAll("circle").style("opacity", 1).style("stroke", "black").style("stroke-width", "1px");
+      d3.selectAll("line").style("opacity", .25);
+      }
 
 </script>
 
